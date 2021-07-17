@@ -2,6 +2,8 @@ using UnityEngine.UI;
 using UnityEngine;
 using Steamworks;
 using System.IO;
+using System;
+using System.Text;
 
 public class RustyWorkshop : MonoBehaviour
 {
@@ -9,6 +11,7 @@ public class RustyWorkshop : MonoBehaviour
     [SerializeField] private Text _noticeText, _statusText, _noticeHeaderText;
     [SerializeField] private InputField _itemNameInput, _itemIconInput;
     [SerializeField] private Image _progressBarImage;
+    private const string _manifest = @"{""Version"":3,""ItemType"":""Rock"",""AuthorId"":{0},""PublishDate"":""{1}"",""Groups"":[{""Textures"":{},""Floats"":{""_Cutoff"":0.0,""_BumpScale"":1.0,""_Glossiness"":1.0,""_OcclusionStrength"":1.0,""_DetailNormalMapScale"":0.65,""_DetailOcclusionStrength"":1.0,""_DetailOverlaySmoothness"":0.0,""_DetailOverlaySpecular"":0.0},""Colors"":{""_Color"":{""r"":1.0,""g"":1.0,""b"":1.0},""_SpecColor"":{""r"":1.0,""g"":1.0,""b"":1.0},""_EmissionColor"":{""r"":0.0,""g"":0.0,""b"":0.0},""_DetailColor"":{""r"":1.0,""g"":1.0,""b"":1.0}}}]}";
     private const string _status = "Steam: {0}\n\nНазвание предмета: {1}\nИконка: {2}\n\nСтатус: {3}";
     private const string _faq = "<b>Что делать, если не получается подключиться к Steam</b>: попробуйте перезапустить Steam (вы обязательно должны быть авторизованы в нем) и RustyWorkshop, иных вариантов нет.\n\n<b>Требования к иконке</b>: должна весить не более 1 мегабайта и быть в формате изображения (не работает с .psd)";
     private bool _isInitialized = false;
@@ -41,19 +44,22 @@ public class RustyWorkshop : MonoBehaviour
             string newDirectoryPath = Application.dataPath + "/Temp";
             Directory.CreateDirectory(newDirectoryPath);
 
-            string newFilePath = $"{newDirectoryPath}/{Path.GetFileName(_itemIconInput.text)}";
+            string newFilePath = $"{newDirectoryPath}/icon{Path.GetExtension(_itemIconInput.text)}";
             File.Copy(_itemIconInput.text, newFilePath);
+
+            File.WriteAllText($"{newDirectoryPath}/manifest.txt", _manifest.Replace("{0}", Steamworks.SteamClient.SteamId.ToString()).Replace("{1}", DateTime.Now.ToString("o")));
 
             System.Progress<float> progress = new System.Progress<float>(value =>
             {
                 OnProgressChanged(value);
             });
 
-            var task = Steamworks.Ugc.Editor.NewCommunityFile
+            var task = Steamworks.Ugc.Editor.NewMicrotransactionFile
                       .WithTitle(_itemNameInput.text)
                       .WithDescription("RustyWorkshop - бесплатный, мультиплатформенный загрузчик иконок для Rust (только на rustyplugin.ru)")
                       .WithContent(newDirectoryPath)
                       .WithPreviewFile(newFilePath)
+                      .WithMetaData("")
                       .ForAppId(252490)
                       .WithPublicVisibility()
                       .WithTag("Skin")
