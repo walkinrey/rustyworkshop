@@ -3,7 +3,7 @@ A multi-platform icon loader for the Rust game.
 
 Very easy to use, it has all the basic functions you might need. Has Russian and English.
 
-Screenshots
+## Screenshots
 
 ![alt text](http://rustyplugin.ru/RustyWorkshop/English/1.jpg)
 ![alt text](http://rustyplugin.ru/RustyWorkshop/English/2.jpg)
