@@ -33,6 +33,13 @@ public class RustyWorkshopEditor : Editor
         GUILayout.Label("<color=white>Status Text</color>", RichStyle(false));
         workshop._statusTextStart = (Text)EditorGUILayout.ObjectField(workshop._statusTextStart, typeof(Text), true);
         GUILayout.EndHorizontal();
+
+        GUILayout.Space(5f);
+
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("<color=white>Language Text</color>", RichStyle(false));
+        workshop._languageText = (Text)EditorGUILayout.ObjectField(workshop._languageText, typeof(Text), true);
+        GUILayout.EndHorizontal();
         
         GUILayout.Space(10f);
 
